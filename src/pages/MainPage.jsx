@@ -1,12 +1,13 @@
 import Timetable from '../components/Timetable';
 import TodayPanel from '../components/TodayPanel';
 import RoutinePanel from '../components/RoutinePanel';
-import { useState } from 'react';
 import AddEventModal from '../components/AddEventModal';
+import { useState } from 'react';
 
 function MainPage() {
-    const [activeTab, setActiveTab] = useState('today');
-    const [showModal, setShowModal] = useState(false);
+  const [activeTab, setActiveTab] = useState('today');
+  const [showModal, setShowModal] = useState(false);
+  const [editEvent, setEditEvent] = useState(null);
 
   return (
     <div className="flex flex-col h-screen bg-white">
@@ -43,11 +44,24 @@ function MainPage() {
             </button>
           </div>
           <div className="flex-1 overflow-y-auto p-5">
-            {activeTab === 'today' ? <TodayPanel /> : <RoutinePanel />}
+            {activeTab === 'today' ? <TodayPanel /> : <RoutinePanel onEdit={setEditEvent} />}
           </div>
         </div>
       </div>
-      {showModal && <AddEventModal onClose={() => setShowModal(false)} />}
+
+      {showModal && (
+        <AddEventModal
+          onClose={() => setShowModal(false)}
+          onSaved={() => window.location.reload()}
+        />
+      )}
+      {editEvent && (
+        <AddEventModal
+          editData={editEvent}
+          onClose={() => setEditEvent(null)}
+          onSaved={() => { setEditEvent(null); window.location.reload(); }}
+        />
+      )}
     </div>
   );
 }
